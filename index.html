@@ -91,9 +91,8 @@
     buttonElement.addEventListener("click", () => {
       const date = new Date()
       nameInputElement.classList.remove("error");
-      textInputElement.classList.remove("error");
-      
-          
+      textInputElement.classList.remove("error");     
+
       if (nameInputElement.value === "" && textInputElement.value === "") {
         nameInputElement.classList.add("error");
         textInputElement.classList.add("error");
@@ -136,6 +135,21 @@
 
       nameInputElement.value = "";
     });
-    
+
+    nameInputElement.addEventListener("input", () => {
+
+      if (nameInputElement.value != "" ) {
+        buttonElement.disabled = false;
+        return;
+      }
+    });
+
+    textInputElement.addEventListener("input", () => {
+
+      if (textInputElement.value != "") {
+        buttonElement.disabled = false;
+        return;
+      }
+    });
   </script>
 </html>
