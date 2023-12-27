@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul id="comment-id" class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -47,25 +47,109 @@
       <div class="add-form">
         <input
           type="text"
+          id="add-name-id"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
           type="textarea"
+          id="add-text-id"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+        <div id="add-form-id" class="add-form-row">
+          <button id="btnId" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
   </body>
-
+  <style>
+    .error {
+      background-color: rgb(255, 153, 0);
+    }
+  </style>
   <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    "use strict"
+    const buttonElement = document.getElementById("btnId");
+    const listElement = document.getElementById("comment-id");
+    const nameInputElement = document.getElementById("add-name-id");
+    const textInputElement = document.getElementById("add-text-id");
+    const buttonPlaceElemet = document.getElementById("add-form-id");
+    const buttonDellElement = document.getElementById("btn-dell-id")
+
+    let time = {
+      hour: 'numeric',
+      minute: 'numeric'
+    };
+    let year = {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric'
+    };
+
+    buttonElement.addEventListener("click", () => {
+      const date = new Date()
+      nameInputElement.classList.remove("error");
+      textInputElement.classList.remove("error");     
+
+      if (nameInputElement.value === "" && textInputElement.value === "") {
+        nameInputElement.classList.add("error");
+        textInputElement.classList.add("error");
+        buttonElement.disabled = true;
+        return;
+      }
+
+      if (nameInputElement.value === "") {
+        nameInputElement.classList.add("error");
+        buttonElement.disabled = true;
+        return;
+      }
+
+      if (textInputElement.value === "") {
+        textInputElement.classList.add("error");
+        buttonElement.disabled = true;
+        return;
+      } 
+
+      const oldListHtml = listElement.innerHTML;
+      listElement.innerHTML =
+        oldListHtml +
+        `<li class="comment">
+          <div class="comment-header">
+            <div>${nameInputElement.value}</div>
+            <div>${date.toLocaleString("ru", year) + " " + date.toLocaleString("ru", time)}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${textInputElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button -active-like"></button>
+            </div>
+          </div>
+        </li>`;
+
+      nameInputElement.value = "";
+    });
+
+    nameInputElement.addEventListener("input", () => {
+
+      if (nameInputElement.value != "" ) {
+        buttonElement.disabled = false;
+        return;
+      }
+    });
+
+    textInputElement.addEventListener("input", () => {
+
+      if (textInputElement.value != "") {
+        buttonElement.disabled = false;
+        return;
+      }
+    });
   </script>
 </html>
