@@ -8,42 +8,7 @@
 
   <body>
     <div class="container">
-      <ul id="comment-id" class="comments">
-        <!-- <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li> -->
-      </ul>
+      <ul id="comment-id" class="comments"></ul>
       <form id="new-form">
         <div class="add-form">
           <input
@@ -79,11 +44,28 @@
     const textInputElement = document.getElementById("add-text-id");
     const formElement = document.getElementById("new-form");
     const likesButtonElement = document.querySelectorAll(".like-button");
+    const delButtonElement = document.querySelectorAll(".del-button");
 
     let comments = [];
+      // const comments = [
+    //   {
+    //     name: "Глеб Фокин",
+    //     time: "12.02.22 12:18",
+    //     comment: "Это будет первый комментарий на этой странице",
+    //     like: 3,
+    //     isLike: false,
+    //   },
+    //   {
+    //     name: "Варвара Н.",
+    //     time: "13.02.22 19:22",
+    //     comment: "Мне нравится как оформлена эта страница! ❤",
+    //     like: 75,
+    //     isLike: false,
+    //   },
+    // ];
 
     const fetchPromise = fetch(
-      "https://wedev-api.sky.pro/api/v1/andrey-bakin/comments",
+      "https://wedev-api.sky.pro/api/v1/andrey_bakin/comments",
       {
         method: "GET",
       }
@@ -138,25 +120,6 @@
       }
     };
 
-    // const comments = [
-    //   {
-    //     name: "Глеб Фокин",
-    //     time: "12.02.22 12:18",
-    //     comment: "Это будет первый комментарий на этой странице",
-    //     like: 3,
-    //     isLike: false,
-    //   },
-    //   {
-    //     name: "Варвара Н.",
-    //     time: "13.02.22 19:22",
-    //     comment: "Мне нравится как оформлена эта страница! ❤",
-    //     like: 75,
-    //     isLike: false,
-    //   },
-    // ];
-
-    // ДЗ 2.12
-
     const safeHtml = (htmlString) => {
       return htmlString.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
     };
@@ -182,7 +145,7 @@
               </span>
               <button class="${
                 comment.isLiked ? "like-button -active-like" : "like-button"
-              }" data-index = '${index}'></button>
+              }" data-index = "${index}"></button>
               <div></div>
               </button>
             </div>
@@ -256,16 +219,34 @@
       let newDate = `${date}.${month + 1}.${year} 
       ${hours}:${minutes}`;
 
-      comments.push({
-        name: nameInputElement.value,
-        date: newDate,
-        text: textInputElement.value,
-        likes: 0,
-        isLiked: false,
+      const nameComment = nameInputElement.value
+      const textComment = textInputElement.value
+      fetch("https://wedev-api.sky.pro/api/v1/andrey_bakin/comments", {
+        method: "POST",
+        body: JSON.stringify({
+          name: nameComment,
+          text: textComment,
+        }),
+      }).then((response) => response.json())
+        .then((responseData) => {
+          comments.push({
+            name: nameComment,
+            text: textComment,
+            date: new Date().toLocaleString().replace(",", ""),
+            likes: 0,
+            isLiked: false,
+          });
+          renderComments();
+        });
+        nameInputElement.value = "";
+        textInputElement.value = "";
       });
-
-      renderComments();
+      
+    fetch("https://wedev-api.sky.pro/api/v1/andrey_bakin/comments", {
+      method: "GET",
     });
+
+    renderComments();
 
     function answerComment() {
       const commentsAnswer = document.querySelectorAll(".comment");
@@ -277,7 +258,7 @@
         });
       });
     }
-
+    console.log(comments);
     console.log("It works!");
   </script>
 </html>
