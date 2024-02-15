@@ -9,7 +9,10 @@
   <body>
     <div class="container">
       <ul id="comment-id" class="comments"></ul>
-      <form id="new-form">
+      <div class="form-loading" style="display: none; margin-top: 20px">
+        Комментарий добавляется...
+      </div>
+      <form class="new-form" id="new-form">
         <div class="add-form">
           <input
             type="text"
@@ -44,55 +47,50 @@
     const textInputElement = document.getElementById("add-text-id");
     const formElement = document.getElementById("new-form");
     const likesButtonElement = document.querySelectorAll(".like-button");
-    const delButtonElement = document.querySelectorAll(".del-button");
+    const host = "https://wedev-api.sky.pro/api/v1/andrey_bakin/comments";
+
+    function fetchComments() {
+      return fetch(host)
+        .then((response) => response.json())
+        .then((responseData) => {
+          return responseData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              date: new Date(comment.date),
+              text: comment.text,
+              likes: comment.likes,
+              isLiked: false,
+            };
+          });
+
+          renderComments();
+        });
+    }
+
+    function postComment(name, text) {
+      return fetch(host, {
+        method: "POST",
+        body: JSON.stringify({
+          name,
+          text,
+        }),
+      }).then(() => {
+        return fetchComments();
+      });
+    }
+
+    const name = document.getElementById("add-name-id");
+    const text = document.getElementById("add-text-id");
 
     let comments = [];
-      // const comments = [
-    //   {
-    //     name: "Глеб Фокин",
-    //     time: "12.02.22 12:18",
-    //     comment: "Это будет первый комментарий на этой странице",
-    //     like: 3,
-    //     isLike: false,
-    //   },
-    //   {
-    //     name: "Варвара Н.",
-    //     time: "13.02.22 19:22",
-    //     comment: "Мне нравится как оформлена эта страница! ❤",
-    //     like: 75,
-    //     isLike: false,
-    //   },
-    // ];
 
-    const fetchPromise = fetch(
-      "https://wedev-api.sky.pro/api/v1/andrey_bakin/comments",
-      {
-        method: "GET",
-      }
-    );
+    let isLoading = true;
+    let isPosting = false;
 
-    fetchPromise.then((response) => {
-      const jsonPromise = response.json();
-      jsonPromise.then((responseData) => {
-        const appComments = responseData.comments.map((comment) => {
-          return {
-            name: comment.author.name,
-            date: new Date(comment.date).toLocaleDateString("sm", {
-              day: "numeric",
-              month: "numeric",
-              year: "numeric",
-              hour: "numeric",
-              minute: "numeric",
-            }),
-            text: comment.text,
-            likes: comment.likes,
-            isLiked: false,
-          };
-        });
-
-        comments = appComments;
-        renderComments();
-      });
+    fetchComments().then((data) => {
+      comments = data;
+      isLoading = false;
+      renderComments();
     });
 
     formElement.addEventListener("submit", (e) => {
@@ -125,13 +123,18 @@
     };
 
     const renderComments = () => {
-      const listElement = document.getElementById("comment-id");
-      const commentsHtml = comments
+      if (isLoading) {
+        document.getElementById("comment-id").innerHTML =
+          "Пожалуйста подождите, загружаю комментарии...";
+        return;
+      }
+
+      document.getElementById("comment-id").innerHTML = comments
         .map((comment, index) => {
-          return `<li class="comment">
+          return `<li class="comment" data-index="${index}">
           <div class="comment-header">
             <div>${safeHtml(comment.name)}</div>
-            <div>${comment.date}</div>
+            <div>${comment.date.toLocaleDateString()} ${comment.date.toLocaleTimeString()}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
@@ -153,7 +156,6 @@
         </li>`;
         })
         .join("");
-      listElement.innerHTML = commentsHtml;
       likesButtonListeners();
       answerComment();
     };
@@ -216,37 +218,27 @@
           ? "0" + addTimeElement.getMonth()
           : addTimeElement.getMonth();
 
-      let newDate = `${date}.${month + 1}.${year} 
+      let newDate = `${date}.${month + 1}.${year}
       ${hours}:${minutes}`;
 
-      const nameComment = nameInputElement.value
-      const textComment = textInputElement.value
-      fetch("https://wedev-api.sky.pro/api/v1/andrey_bakin/comments", {
-        method: "POST",
-        body: JSON.stringify({
-          name: nameComment,
-          text: textComment,
-        }),
-      }).then((response) => response.json())
-        .then((responseData) => {
-          comments.push({
-            name: nameComment,
-            text: textComment,
-            date: new Date().toLocaleString().replace(",", ""),
-            likes: 0,
-            isLiked: false,
-          });
-          renderComments();
-        });
-        nameInputElement.value = "";
-        textInputElement.value = "";
-      });
-      
-    fetch("https://wedev-api.sky.pro/api/v1/andrey_bakin/comments", {
-      method: "GET",
-    });
+      const nameComment = nameInputElement.value;
+      const textComment = textInputElement.value;
 
-    renderComments();
+      isPosting = true;
+      document.querySelector(".form-loading").style.display = "block";
+      document.querySelector(".new-form").style.display = "none";
+      renderComments();
+
+      postComment(name.value, text.value).then((data) => {
+        name.value = "";
+        text.value = "";
+        document.querySelector(".form-loading").style.display = "none";
+        document.querySelector(".new-form").style.display = "flex";
+        isPosting = false;
+        comments = data;
+        renderComments();
+      });
+    });
 
     function answerComment() {
       const commentsAnswer = document.querySelectorAll(".comment");
@@ -258,7 +250,7 @@
         });
       });
     }
-    console.log(comments);
+
     console.log("It works!");
   </script>
 </html>
