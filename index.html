@@ -73,8 +73,18 @@
         body: JSON.stringify({
           name,
           text,
+          forceError: true,
         }),
-      }).then(() => {
+      }).then((response) =>{
+        if (response.status === 500) {
+          throw new Error("Ошибка сервера");
+        }
+
+        if (response.status === 400) {
+          throw new Error("Неверный запрос")
+        }
+      })
+      .then(() => {
         return fetchComments();
       });
     }
@@ -91,11 +101,14 @@
       comments = data;
       isLoading = false;
       renderComments();
+    })
+    .catch((error) =>{
+      alert(error.message);
     });
 
     formElement.addEventListener("submit", (e) => {
       e.preventDefault();
-      e.target.reset();
+      // e.target.reset();
     });
 
     const likesButtonListeners = () => {
@@ -288,7 +301,29 @@
         isPosting = false;
         comments = data;
         renderComments();
-      });
+      })
+      .catch((error) =>{
+        document.querySelector(".form-loading").style.display = "none";
+        document.querySelector(".new-form").style.display = "flex";
+        isPosting = false;
+
+        if (error.message === "Ошибка сервера") {
+          alert("Сервер сломался, попробуй позже");
+        }
+
+        if (error.message === "Неверный запрос") {
+          alert("Имя и комментарий должны быть не короче 3 символов");
+
+          name.classList.add("error");
+          text.classList.add("error");
+          setTimeout(() => {
+            name.classList.remove("error");
+            text.classList.remove("error");
+          }, 2000);
+        }
+      })
+
+      renderComments();
     });
 
     function answerComment() {
