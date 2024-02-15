@@ -83,6 +83,7 @@
         if (response.status === 400) {
           throw new Error("Неверный запрос")
         }
+        
       })
       .then(() => {
         return fetchComments();
@@ -241,49 +242,6 @@
     buttonElement.addEventListener("click", () => {
       formValidation()
       setDate()
-      // nameInputElement.classList.remove("error");
-      // textInputElement.classList.remove("error");
-
-      // if (nameInputElement.value === "" && textInputElement.value === "") {
-      //   nameInputElement.classList.add("error");
-      //   textInputElement.classList.add("error");
-      //   buttonElement.disabled = true;
-      //   return;
-      // }
-
-      // if (nameInputElement.value === "") {
-      //   nameInputElement.classList.add("error");
-      //   buttonElement.disabled = true;
-      //   return;
-      // }
-
-      // if (textInputElement.value === "") {
-      //   textInputElement.classList.add("error");
-      //   buttonElement.disabled = true;
-      //   return;
-      // }
-
-      // let addTimeElement = new Date();
-      // let year = addTimeElement.getFullYear().toString().slice(-2);
-      // let minutes =
-      //   addTimeElement.getMinutes() < 10
-      //     ? "0" + addTimeElement.getMinutes()
-      //     : addTimeElement.getMinutes();
-      // let hours =
-      //   addTimeElement.getHours() < 10
-      //     ? "0" + addTimeElement.getHours()
-      //     : addTimeElement.getHours();
-      // let date =
-      //   addTimeElement.getDate() < 10
-      //     ? "0" + addTimeElement.getDate()
-      //     : addTimeElement.getDate();
-      // let month =
-      //   addTimeElement.getMonth() < 10
-      //     ? "0" + addTimeElement.getMonth()
-      //     : addTimeElement.getMonth();
-
-      // let newDate = `${date}.${month + 1}.${year}
-      // ${hours}:${minutes}`;
 
       const nameComment = nameInputElement.value;
       const textComment = textInputElement.value;
@@ -313,7 +271,7 @@
 
         if (error.message === "Неверный запрос") {
           alert("Имя и комментарий должны быть не короче 3 символов");
-
+        
           name.classList.add("error");
           text.classList.add("error");
           setTimeout(() => {
