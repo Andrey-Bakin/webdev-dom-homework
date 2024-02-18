@@ -4,11 +4,9 @@ import { formValidation } from "./formValidation.js";
 import { setDate } from "./SetDate.js";
 
 const buttonElement = document.getElementById("btnId");
-// const listElement = document.getElementById("comment-id");
 const nameInputElement = document.getElementById("add-name-id");
 const textInputElement = document.getElementById("add-text-id");
 const formElement = document.getElementById("new-form");
-// const likesButtonElement = document.querySelectorAll(".like-button");
 
 function fetchComments() {
   return getCommentsFromModule().then((responseData) => {
@@ -21,8 +19,6 @@ function fetchComments() {
         isLiked: false,
       };
     });
-
-    renderComments({ isloading, comments });
   });
 }
 
@@ -49,6 +45,8 @@ let comments = [];
 
 let isLoading = true;
 let isPosting = false;
+
+renderComments({ isLoading, comments });
 
 fetchComments()
   .then((data) => {
@@ -85,48 +83,6 @@ export const likesButtonListeners = () => {
   }
 };
 
-// const safeHtml = (htmlString) => {
-//   return htmlString.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
-// };
-
-// const renderComments = () => {
-//   if (isLoading) {
-//     document.getElementById("comment-id").innerHTML =
-//       "Пожалуйста подождите, загружаю комментарии...";
-//     return;
-//   }
-
-//   document.getElementById("comment-id").innerHTML = comments
-//     .map((comment, index) => {
-//       return `<li class="comment" data-index="${index}">
-//       <div class="comment-header">
-//         <div>${safeHtml(comment.name)}</div>
-//         <div>${comment.date.toLocaleDateString()} ${comment.date.toLocaleTimeString()}</div>
-//       </div>
-//       <div class="comment-body">
-//         <div class="comment-text">
-//           ${safeHtml(comment.text)}
-//         </div>
-//       </div>
-//       <div class="comment-footer">
-//         <div class="likes">
-//           <span class="likes-counter">
-//             <div>${comment.likes}</div>
-//           </span>
-//           <button class="${
-//             comment.isLiked ? "like-button -active-like" : "like-button"
-//           }" data-index = "${index}"></button>
-//           <div></div>
-//           </button>
-//         </div>
-//       </div>
-//     </li>`;
-//     })
-//     .join("");
-//   likesButtonListeners();
-//   answerComment();
-// };
-
 nameInputElement.addEventListener("input", () => {
   if (nameInputElement.value != "") {
     buttonElement.disabled = false;
@@ -145,9 +101,6 @@ buttonElement.addEventListener("click", () => {
   formValidation(nameInputElement, textInputElement, buttonElement);
   setDate();
 
-//   const nameComment = nameInputElement.value;
-//   const textComment = textInputElement.value;
-
   isPosting = true;
   document.querySelector(".form-loading").style.display = "block";
   document.querySelector(".new-form").style.display = "none";
@@ -161,7 +114,7 @@ buttonElement.addEventListener("click", () => {
       document.querySelector(".new-form").style.display = "flex";
       isPosting = false;
       comments = data;
-      renderComments({ isloading, comments });
+      renderComments({ isLoading, comments });
     })
     .catch((error) => {
       document.querySelector(".form-loading").style.display = "none";
