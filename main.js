@@ -140,7 +140,7 @@ textInputElement.addEventListener("input", () => {
   }
 });
 
-// function formValidation(nameInputElement, textInputElement, buttonElement) {
+// function formValidation() {
 //     nameInputElement.classList.remove("error");
 //     textInputElement.classList.remove("error");
   
