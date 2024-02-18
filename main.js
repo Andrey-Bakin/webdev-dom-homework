@@ -1,6 +1,7 @@
 import { getCommentsFromModule, postCommentsFromModule } from "./api.js";
 import { renderComments } from "./render.js";
 import { formValidation } from "./formValidation.js";
+import { setDate } from "./SetDate.js";
 
 const buttonElement = document.getElementById("btnId");
 // const listElement = document.getElementById("comment-id");
@@ -140,61 +141,12 @@ textInputElement.addEventListener("input", () => {
   }
 });
 
-// function formValidation() {
-//     nameInputElement.classList.remove("error");
-//     textInputElement.classList.remove("error");
-  
-//     if (nameInputElement.value === "" && textInputElement.value === "") {
-//       nameInputElement.classList.add("error");
-//       textInputElement.classList.add("error");
-//       buttonElement.disabled = true;
-//       return;
-//     }
-  
-//     if (nameInputElement.value === "") {
-//       nameInputElement.classList.add("error");
-//       buttonElement.disabled = true;
-//       return;
-//     }
-  
-//     if (textInputElement.value === "") {
-//       textInputElement.classList.add("error");
-//       buttonElement.disabled = true;
-//       return;
-//     }
-//   }
-
-function setDate() {
-  let addTimeElement = new Date();
-  let year = addTimeElement.getFullYear().toString().slice(-2);
-  let minutes =
-    addTimeElement.getMinutes() < 10
-      ? "0" + addTimeElement.getMinutes()
-      : addTimeElement.getMinutes();
-  let hours =
-    addTimeElement.getHours() < 10
-      ? "0" + addTimeElement.getHours()
-      : addTimeElement.getHours();
-  let date =
-    addTimeElement.getDate() < 10
-      ? "0" + addTimeElement.getDate()
-      : addTimeElement.getDate();
-  let month =
-    addTimeElement.getMonth() < 10
-      ? "0" + addTimeElement.getMonth()
-      : addTimeElement.getMonth();
-
-  let newDate = `${date}.${month + 1}.${year}
-      ${hours}:${minutes}`;
-  return;
-}
-
 buttonElement.addEventListener("click", () => {
   formValidation(nameInputElement, textInputElement, buttonElement);
   setDate();
 
-  const nameComment = nameInputElement.value;
-  const textComment = textInputElement.value;
+//   const nameComment = nameInputElement.value;
+//   const textComment = textInputElement.value;
 
   isPosting = true;
   document.querySelector(".form-loading").style.display = "block";
