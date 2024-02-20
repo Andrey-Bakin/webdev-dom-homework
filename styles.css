@@ -146,12 +146,31 @@ body {
   cursor: pointer;
 }
 
-.login-link {
+.reg-link {
   display: flex;
   align-items: center;
   margin-top: 24px;
   font-size: 24px;
   padding: 20px 165px;
+  color: #ffffff;
+}
+
+.reg-form-button {
+  margin-top: 24px;
+  font-size: 24px;
+  padding: 10px 165px;
+  background-color: #bcec30;
+  border: none;
+  border-radius: 18px;
+  cursor: pointer;
+}
+
+.login-link {
+  display: flex;
+  align-items: center;
+  margin-top: 24px;
+  font-size: 24px;
+  padding: 20px 247px;
   color: #ffffff;
 }
 
