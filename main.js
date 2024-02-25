@@ -2,11 +2,13 @@ import { getCommentsFromModule, postCommentsFromModule } from "./api.js";
 import { renderComments } from "./render.js";
 import { formValidation } from "./formValidation.js";
 import { setDate } from "./SetDate.js";
+import { renderLogin } from "./loginPage.js";
 
-const buttonElement = document.getElementById("btnId");
-const nameInputElement = document.getElementById("add-name-id");
+const buttonElement = document.getElementById("btn-id");
+export const nameInputElement = document.getElementById("add-name-id");
 const textInputElement = document.getElementById("add-text-id");
 const formElement = document.getElementById("new-form");
+const authLinklElement = document.querySelector(".auth-link")
 
 function fetchComments() {
   return getCommentsFromModule().then((responseData) => {
@@ -22,8 +24,8 @@ function fetchComments() {
   });
 }
 
-function postComment(name, text) {
-  return postCommentsFromModule(name, text)
+function postComment(text) {
+  return postCommentsFromModule(text)
     .then((response) => {
       if (response.status === 500) {
         throw new Error("Ошибка сервера");
@@ -45,6 +47,20 @@ let comments = [];
 
 let isLoading = true;
 let isPosting = false;
+let isLogin = false;
+
+if (isLogin = !false) {
+  document.querySelector(".not-login").style.display = "block";
+  document.querySelector(".new-form").style.display = "none";
+} 
+
+authLinklElement.addEventListener("click", () => {
+  document.getElementById("comment-id").style.display = "none";
+  document.querySelector(".new-form").style.display = "none";
+  document.querySelector(".not-login").style.display = "none";
+
+  renderLogin();
+})
 
 renderComments({ isLoading, comments });
 
@@ -85,7 +101,7 @@ export const likesButtonListeners = () => {
 
 nameInputElement.addEventListener("input", () => {
   if (nameInputElement.value != "") {
-    buttonElement.disabled = false;
+    buttonElement.disabled = true;
     return;
   }
 });
@@ -98,7 +114,7 @@ textInputElement.addEventListener("input", () => {
 });
 
 buttonElement.addEventListener("click", () => {
-  formValidation(nameInputElement, textInputElement, buttonElement);
+  formValidation(textInputElement, buttonElement);
   setDate();
 
   isPosting = true;
@@ -106,7 +122,7 @@ buttonElement.addEventListener("click", () => {
   document.querySelector(".new-form").style.display = "none";
   renderComments({ isLoading, comments });
 
-  postComment(name.value, text.value)
+  postComment(tname.value, text.value)
     .then((data) => {
       name.value = "";
       text.value = "";
@@ -126,7 +142,7 @@ buttonElement.addEventListener("click", () => {
       }
 
       if (error.message === "Неверный запрос") {
-        alert("Имя и комментарий должны быть не короче 3 символов");
+        alert("Текст должен быть не короче 3 символов");
 
         name.classList.add("error");
         text.classList.add("error");
