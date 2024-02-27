@@ -1,9 +1,10 @@
-import { nameInputElement } from "./main.js";
-
+import { nameInputElement, formElement } from "./main.js";
+import { renderComments } from "./render.js";
 
 const host = "https://wedev-api.sky.pro/api/v2/andrey_bakin/comments";
 const hostLogin = "https://wedev-api.sky.pro/api/user/login";
-// "Bearer asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k";
+
+let user;
 export let token;
 
 export const setToken = (newToken) => {
@@ -13,6 +14,9 @@ export const setToken = (newToken) => {
 export function getCommentsFromModule(comments) {
   return fetch(host, {
     method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   }).then((response) => {
     return response.json();
   });
@@ -27,19 +31,40 @@ export function postCommentsFromModule(text) {
     body: JSON.stringify({
       text,
     }),
-  }).then((response) => {
+  })
+  .then((response) => {
+    if (response.status === 500) {
+      throw new Error("Ошибка сервера");
+    } else if (response.status === 400) {
+      throw new Error("Неверный запрос");
+    }
+  })
+  .then((response) => {
     return response.json();
+  })
+  .catch((error) => {
+    document.querySelector(".form-loading").style.display = "none";
+    document.querySelector(".comment-form").style.display = "flex";
+    if (error.message === "Ошибка сервера") {
+      alert("Сервер сломался, попробуй позже");
+    } else if (error.message === "Неверный запрос") {
+      alert("Текст должен быть не короче 3 символов");
+      text.classList.add("error");
+      setTimeout(() => {
+        text.classList.remove("error");
+      }, 2000);
+    } else {
+      alert("Кажется, у вас сломался интернет, попробуйте позже");
+    }
   });
 }
 
-
-
-export function loginUser({ addLogin, addPassword }) {
+export function loginUser(loginValue, passwordValue) {
   return fetch(hostLogin, {
     method: "POST",
     body: JSON.stringify({
-      login: addLogin,
-      password: addPassword,
+      login: loginValue,
+      password: passwordValue,
     }),
   })
     .then((response) => {
@@ -53,11 +78,12 @@ export function loginUser({ addLogin, addPassword }) {
       return response.json();
     })
     .then((responseData) => {
-      console.log(responseData);
       setToken(responseData.user.token);
-      getCommentsFromModule();
-      document.querySelector(".new-form").style.display = "block";
+      document.querySelector(".comments").style.display = "block";
+      formElement.classList.add(".comments");
+      document.querySelector(".comment-form").style.display = "block";
       document.querySelector(".not-login").style.display = "none";
+      document.querySelector(".login-form").style.display = "none";
       nameInputElement.value = responseData.user.name;
       nameInputElement.disabled = true;
     })
