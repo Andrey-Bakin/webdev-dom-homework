@@ -1,20 +1,19 @@
-import { likesButtonListeners, answerComment } from "./main.js"; 
+import { likesButtonListeners, answerComment } from "./main.js";
 
 const safeHtml = (htmlString) => {
-    return htmlString.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
-  };
+  return htmlString.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+};
 
 export function renderComments({ isLoading, comments }) {
+  if (isLoading) {
+    document.getElementById("comment-id").innerHTML =
+      "Пожалуйста подождите, загружаю комментарии...";
+    return;
+  }
 
-    if (isLoading) {
-        document.getElementById("comment-id").innerHTML =
-            "Пожалуйста подождите, загружаю комментарии...";
-        return;
-    }
-
-    document.getElementById("comment-id").innerHTML = comments
-        .map((comment, index) => {
-            return `<li class="comment" data-index="${index}">
+  document.getElementById("comment-id").innerHTML = comments
+    .map((comment, index) => {
+      return `<li class="comment" data-index="${index}">
         <div class="comment-header">
           <div>${safeHtml(comment.name)}</div>
           <div>${comment.date.toLocaleDateString()} ${comment.date.toLocaleTimeString()}</div>
@@ -29,16 +28,16 @@ export function renderComments({ isLoading, comments }) {
             <span class="likes-counter">
               <div>${comment.likes}</div>
             </span>
-            <button class="${comment.isLiked ? "like-button -active-like" : "like-button"}" data-index = "${index}"></button>
+            <button class="${
+              comment.isLiked ? "like-button -active-like" : "like-button"
+            }" data-index = "${index}"></button>
             <div></div>
             </button>
           </div>
         </div>
       </li>`;
-        })
-        .join("");    
-    likesButtonListeners();
-    answerComment();
-};
-
-// renderComments({ comments });
+    })
+    .join("");
+  likesButtonListeners();
+  answerComment();
+}

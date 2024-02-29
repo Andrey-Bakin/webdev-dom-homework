@@ -1,12 +1,16 @@
-import { getCommentsFromModule, postCommentsFromModule } from "./api.js";
+import {
+  getCommentsFromModule,
+  postCommentsFromModule, } from "./api.js";
 import { renderComments } from "./render.js";
 import { formValidation } from "./formValidation.js";
 import { setDate } from "./SetDate.js";
+import { renderLogin } from "./loginPage.js";
 
-const buttonElement = document.getElementById("btnId");
-const nameInputElement = document.getElementById("add-name-id");
-const textInputElement = document.getElementById("add-text-id");
-const formElement = document.getElementById("new-form");
+export const buttonElement = document.getElementById("btn-id");
+export const nameInputElement = document.getElementById("add-name-id");
+export const textInputElement = document.getElementById("add-text-id");
+export const formElement = document.getElementById("comment-form");
+export const authLinklElement = document.querySelector(".auth-link");
 
 function fetchComments() {
   return getCommentsFromModule().then((responseData) => {
@@ -22,17 +26,8 @@ function fetchComments() {
   });
 }
 
-function postComment(name, text) {
-  return postCommentsFromModule(name, text)
-    .then((response) => {
-      if (response.status === 500) {
-        throw new Error("Ошибка сервера");
-      }
-
-      if (response.status === 400) {
-        throw new Error("Неверный запрос");
-      }
-    })
+function postComment(text) {
+  return postCommentsFromModule(text)
     .then(() => {
       return fetchComments();
     });
@@ -45,6 +40,19 @@ let comments = [];
 
 let isLoading = true;
 let isPosting = false;
+let notLogin = true;
+
+if ((notLogin = true)) {
+  document.querySelector(".not-login").style.display = "block";
+  document.querySelector(".comment-form").style.display = "none";
+}
+
+authLinklElement.addEventListener("click", () => {
+  document.getElementById("comment-id").style.display = "none";
+  document.querySelector(".comment-form").style.display = "none";
+  document.querySelector(".not-login").style.display = "none";
+  renderLogin(getCommentsFromModule);
+});
 
 renderComments({ isLoading, comments });
 
@@ -83,13 +91,6 @@ export const likesButtonListeners = () => {
   }
 };
 
-nameInputElement.addEventListener("input", () => {
-  if (nameInputElement.value != "") {
-    buttonElement.disabled = false;
-    return;
-  }
-});
-
 textInputElement.addEventListener("input", () => {
   if (textInputElement.value != "") {
     buttonElement.disabled = false;
@@ -98,47 +99,23 @@ textInputElement.addEventListener("input", () => {
 });
 
 buttonElement.addEventListener("click", () => {
-  formValidation(nameInputElement, textInputElement, buttonElement);
+  formValidation(textInputElement, buttonElement);
   setDate();
 
   isPosting = true;
   document.querySelector(".form-loading").style.display = "block";
-  document.querySelector(".new-form").style.display = "none";
+  document.querySelector(".comment-form").style.display = "none";
   renderComments({ isLoading, comments });
 
-  postComment(name.value, text.value)
+  postComment(text.value)
     .then((data) => {
-      name.value = "";
       text.value = "";
       document.querySelector(".form-loading").style.display = "none";
-      document.querySelector(".new-form").style.display = "flex";
+      document.querySelector(".comment-form").style.display = "flex";
       isPosting = false;
       comments = data;
       renderComments({ isLoading, comments });
     })
-    .catch((error) => {
-      document.querySelector(".form-loading").style.display = "none";
-      document.querySelector(".new-form").style.display = "flex";
-      isPosting = false;
-
-      if (error.message === "Ошибка сервера") {
-        alert("Сервер сломался, попробуй позже");
-      }
-
-      if (error.message === "Неверный запрос") {
-        alert("Имя и комментарий должны быть не короче 3 символов");
-
-        name.classList.add("error");
-        text.classList.add("error");
-        setTimeout(() => {
-          name.classList.remove("error");
-          text.classList.remove("error");
-        }, 2000);
-      } else {
-        alert("Кажется, у вас сломался интернет, попробуйте позже");
-      }
-    });
-
   renderComments({ isLoading, comments });
 });
 

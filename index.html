@@ -9,10 +9,8 @@
   <body>
     <div class="container">
       <ul id="comment-id" class="comments"></ul>
-      <div class="form-loading" style="display: none; margin-top: 20px">
-        Комментарий добавляется...
-      </div>
-      <form class="new-form" id="new-form">
+
+      <form class="comment-form" id="comment-form">
         <div class="add-form">
           <input
             type="text"
@@ -28,10 +26,18 @@
             rows="4"
           ></textarea>
           <div id="add-form-id" class="add-form-row">
-            <button id="btnId" class="add-form-button">Написать</button>
+            <button id="btn-id" class="add-form-button">Написать</button>
           </div>
         </div>
       </form>
+      <div class="form-loading" style="display: none; margin-top: 20px">
+        Комментарий добавляется...
+      </div>
+      <div id="app"></div>
+      <div class="not-login" style="display: none; margin-top: 20px">
+        Чтобы добавить комментарий,
+        <a class="auth-link" href="#">авторизуйтесь</a>
+      </div>
     </div>
   </body>
   <style>

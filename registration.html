@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Проект "Комменты". Регистрация</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <div class="container">
+      <ul id="comment-id" class="comments"></ul>
+      <form class="comment-form" id="comment-form">
+        <div class="add-form">
+          <strong class="add-form-header">Форма регистрации</strong>
+          <input
+            type="text"
+            id="add-name-id"
+            class="add-form-text"
+            placeholder="Введите имя"
+          />
+          <input
+            type="text"
+            id="add-login-id"
+            class="add-form-text"
+            placeholder="Введите логин"
+          />
+          <input
+            type="text"
+            id="add-password-id"
+            class="add-form-text"
+            placeholder="Введите пароль"
+          />
+          <div id="add-form-id" class="add-form-row">
+            <button id="reg-btn-id" class="reg-form-button">
+              Зарегистрироваться
+            </button>
+          </div>
+          <div><a class="login-link" href="#">Войти</a></div>
+        </div>
+      </form>
+    </div>
+  </body>
+  <style>
+    .error {
+      background-color: rgb(255, 153, 0);
+    }
+  </style>
+  <script type="module" src="./loginPage.js"></script>
+</html>
