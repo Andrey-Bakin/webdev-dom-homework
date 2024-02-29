@@ -1,10 +1,8 @@
 import { nameInputElement, formElement } from "./main.js";
-import { renderComments } from "./render.js";
 
 const host = "https://wedev-api.sky.pro/api/v2/andrey_bakin/comments";
 const hostLogin = "https://wedev-api.sky.pro/api/user/login";
 
-let user;
 export let token;
 
 export const setToken = (newToken) => {
@@ -33,7 +31,9 @@ export function postCommentsFromModule(text) {
     }),
   })
   .then((response) => {
-    if (response.status === 500) {
+    if (response.status === 201) {
+      return response;
+    } else if (response.status === 500) {
       throw new Error("Ошибка сервера");
     } else if (response.status === 400) {
       throw new Error("Неверный запрос");
