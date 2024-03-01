@@ -16,7 +16,7 @@ export function renderComments({ isLoading, comments }) {
       return `<li class="comment" data-index="${index}">
         <div class="comment-header">
           <div>${safeHtml(comment.name)}</div>
-          <div>${comment.date.toLocaleDateString()} ${comment.date.toLocaleTimeString()}</div>
+          <div>${comment.date}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">
