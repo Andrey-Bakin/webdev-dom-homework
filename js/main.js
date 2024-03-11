@@ -1,10 +1,8 @@
-import {
-  getCommentsFromModule,
-  postCommentsFromModule, } from "./api.js";
+import { getCommentsFromModule, postCommentsFromModule } from "./api.js";
 import { renderComments } from "./render.js";
 import { formValidation } from "./formValidation.js";
-import { setDate } from "./SetDate.js";
 import { renderLogin } from "./loginPage.js";
+import { format } from "date-fns";
 
 export const buttonElement = document.getElementById("btn-id");
 export const nameInputElement = document.getElementById("add-name-id");
@@ -17,7 +15,7 @@ function fetchComments() {
     return responseData.comments.map((comment) => {
       return {
         name: comment.author.name,
-        date: new Date(comment.date),
+        date: format (new Date(comment.date), 'yyyy-MM-dd hh.mm.ss'),
         text: comment.text,
         likes: comment.likes,
         isLiked: false,
@@ -27,10 +25,9 @@ function fetchComments() {
 }
 
 function postComment(text) {
-  return postCommentsFromModule(text)
-    .then(() => {
-      return fetchComments();
-    });
+  return postCommentsFromModule(text).then(() => {
+    return fetchComments();
+  });
 }
 
 const name = document.getElementById("add-name-id");
@@ -100,22 +97,20 @@ textInputElement.addEventListener("input", () => {
 
 buttonElement.addEventListener("click", () => {
   formValidation(textInputElement, buttonElement);
-  setDate();
-
+  
   isPosting = true;
   document.querySelector(".form-loading").style.display = "block";
   document.querySelector(".comment-form").style.display = "none";
   renderComments({ isLoading, comments });
 
-  postComment(text.value)
-    .then((data) => {
-      text.value = "";
-      document.querySelector(".form-loading").style.display = "none";
-      document.querySelector(".comment-form").style.display = "flex";
-      isPosting = false;
-      comments = data;
-      renderComments({ isLoading, comments });
-    })
+  postComment(text.value).then((data) => {
+    text.value = "";
+    document.querySelector(".form-loading").style.display = "none";
+    document.querySelector(".comment-form").style.display = "flex";
+    isPosting = false;
+    comments = data;
+    renderComments({ isLoading, comments });
+  });
   renderComments({ isLoading, comments });
 });
 
